@@ -17,7 +17,7 @@ const FlagNumberAliens = "N"
 var startCmd = &cobra.Command{
 	Use:     "start",
 	Short:   "starts the extraterrestrial invasion of a world",
-	Example: "invasion --file=\"./assets/world.txt\" --N=", // TODO: add an example file to bin/world.txt
+	Example: "invasion --file=\"./assets/world.txt\" --N=",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Parse flags
 		filePath := viper.GetString(FlagInFile)
