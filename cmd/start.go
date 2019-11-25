@@ -39,11 +39,12 @@ var startCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		log.Printf("Playing the game...")
-		err = game.Play()
-		if err != nil {
-			log.Fatal(err)
-		}
+		// TODO: Game play
+		// log.Printf("Playing the game...")
+		// err = game.Play()
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
 	},
 }

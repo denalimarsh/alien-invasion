@@ -13,18 +13,25 @@ func Setup(file string, numAliens int) error {
 	// Create an empty new world
 	world := types.NewWorld()
 
-	// TODO: parse cities, paths from file
+	// Add cities, paths to world from given file
+	err := ProcessFile(file, world)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Printf("World: %v", world)
+	// Print starting world
+	world.Print()
 
-	// TODO: add cities, paths to world
-
-	// TODO: generate aliens and place them in cities
+	// Randomly place aliens in cities
+	err = world.PopulateAliens(numAliens)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return nil
 }
 
-// TODO: implement Play
+// Play :  TODO: implement Play
 func Play() error {
 	return nil
 }

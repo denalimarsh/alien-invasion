@@ -13,7 +13,7 @@ Melbourne west=Sydney north=Seoul
 Kabul south=Delhi east=Hanoi
 Rome north=Paris east=Istanbul west=Madrid south=Cairo
 Toronto south=Chicago east=Tokyo west=London
-Chicago north=Toronto south=Houston west=Sacamento
+Chicago north=Toronto south=Houston west=Sacramento
 Houston north=Chicago east=Madrid west=Sacramento
 Paris north=Copenhagen south=Madrid east=Berlin west=London
 Berlin west=Paris north=Copenhagen south=Rome
