@@ -1,0 +1,22 @@
+Beijing south=Seoul west=Rome
+Mumbai north=Delhi west=Cairo east=Beijing
+Istanbul east=Beijing west=Paris
+Tokyo east=Beijing west=Sacramento
+Delhi south=Melbourne west=Cairo east=Seoul
+Cairo north=Rome east=Kabul
+Seoul south=Singapore
+Hanoi south=Sydney west=Kabul
+Singapore north=Hanoi west=Delhi south=Sydney
+Sydney north=Seoul east=Melbourne north=Tokyo
+Copenhagen south=Berlin west=London
+Melbourne west=Sydney north=Seoul
+Kabul south=Delhi east=Hanoi
+Rome north=Paris east=Istanbul west=Madrid south=Cairo
+Toronto south=Chicago east=Tokyo west=London
+Chicago north=Toronto south=Houston west=Sacamento
+Houston north=Chicago east=Madrid west=Sacramento
+Paris north=Copenhagen south=Madrid east=Berlin west=London
+Berlin west=Paris north=Copenhagen south=Rome
+London south=Madrid west=Berlin east=Sacramento
+Madrid north=Paris east=Rome
+Sacramento north=Toronto east=Houston west=Tokyo
