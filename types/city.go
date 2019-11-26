@@ -5,8 +5,8 @@ import (
 	"math/rand"
 )
 
-// City : a node which contains a unique id, collection of aliens,
-//		  and a list of all incoming/outgoing paths.
+// City : a node which is connected to other Cities via Paths
+//		  and can host a mapping of Aliens
 type City struct {
 	Name          string
 	OutgoingPaths []*Path
@@ -24,12 +24,43 @@ func NewCity(name string) *City {
 	}
 }
 
-// AlienArrival : records the arrival of an alien visitor
+// RegisterOutgoingPath : registers an outgoing path e.g. (This_City -> Other_City)
+func (c *City) RegisterOutgoingPath(path *Path) {
+	c.OutgoingPaths = append(c.OutgoingPaths, path)
+}
+
+// RegisterIncomingPath : registers an incoming path e.g. (Other_City -> This_City)
+func (c *City) RegisterIncomingPath(path *Path) {
+	c.IncomingPaths = append(c.IncomingPaths, path)
+}
+
+// GetRandomOutgoingPath : gets a random outgoing path
+func (c City) GetRandomOutgoingPath(r *rand.Rand) (*Path, error) {
+	if c.NumOutgoingPaths() == 0 {
+		return nil, errors.New("this city has no remaining outgoing paths")
+	}
+	return c.OutgoingPaths[r.Intn(c.NumOutgoingPaths())], nil
+}
+
+// RemoveAllPaths : removes all paths worldwide which reference this city
+func (c *City) RemoveAllPaths() {
+	// Remove all outgoing paths
+	c.OutgoingPaths = c.OutgoingPaths[:0]
+	for i := 0; i < len(c.IncomingPaths); i++ {
+		incomingPath := c.IncomingPaths[i]
+		if incomingPath != nil {
+			cityWithIncomingPath := incomingPath.GetCity()
+			cityWithIncomingPath.removeOutgoingPath(c.GetName())
+		}
+	}
+}
+
+// AlienArrival : records the arrival of an Alien visitor
 func (c *City) AlienArrival(alien *Alien) {
 	c.Aliens[alien.GetID()] = alien
 }
 
-// AlienDeparture : records the departure of an alien guest
+// AlienDeparture : records the departure of an Alien guest
 func (c *City) AlienDeparture(alien *Alien) {
 	delete(c.Aliens, alien.GetID())
 }
@@ -43,57 +74,22 @@ func (c *City) GetAlienIDs() []int {
 	return ids
 }
 
-// RegisterOutgoingPath : registers an outgoing path e.g. (This_City -> Other_City)
-func (c *City) RegisterOutgoingPath(path *Path) {
-	c.OutgoingPaths = append(c.OutgoingPaths, path)
-}
-
-// RegisterIncomingPath : registers an incoming path e.g. (Other_City -> This_City)
-func (c *City) RegisterIncomingPath(path *Path) {
-	c.IncomingPaths = append(c.IncomingPaths, path)
-}
-
-// GetRandomOutgoingPath : gets a random outgoing path
-func (c City) GetRandomOutgoingPath(r *rand.Rand) (*Path, error) {
-	// Check error. This should never be hit as this error is already handled
-	if c.NumOutgoingPaths() == 0 {
-		return nil, errors.New("this city has no remaining outgoing paths")
-	}
-	return c.OutgoingPaths[r.Intn(c.NumOutgoingPaths())], nil
-}
-
-// RemoveAllPaths : removes all paths worldwide which reference this city
-func (c *City) RemoveAllPaths() {
-	// Remove all outgoing paths
-	c.OutgoingPaths = c.OutgoingPaths[:0]
-
-	// Remove all incoming paths
-	for i := 0; i < len(c.IncomingPaths); i++ {
-		incomingPath := c.IncomingPaths[i]
-		// Check that the path has not already been removed
-		if incomingPath != nil {
-			cityWithIncomingPath := incomingPath.GetCity()
-			cityWithIncomingPath.removeOutgoingPath(c.GetName())
-		}
-	}
-}
-
 // GetName : returns the City's name
 func (c *City) GetName() string {
 	return c.Name
 }
 
-// NumAliens : returns the current number of aliens hosted by the city
+// NumAliens : returns the current number of Aliens hosted by the city
 func (c *City) NumAliens() int {
 	return len(c.Aliens)
 }
 
-// NumOutgoingPaths : returns the current number of outgoing paths
+// NumOutgoingPaths : returns the current number of outgoing Paths
 func (c *City) NumOutgoingPaths() int {
 	return len(c.OutgoingPaths)
 }
 
-// OutgoingPathsToString : formats the City's outgoing paths in string
+// OutgoingPathsToString : formats the City's outgoing Paths in string
 //						   representation for printing
 func (c *City) OutgoingPathsToString() string {
 	var buffer string

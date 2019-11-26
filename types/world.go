@@ -10,19 +10,21 @@ import (
 
 // World : contains all cities, aliens, and cities indexed by number
 type World struct {
-	Cities  map[string]*City
-	Aliens  map[int]*Alien
-	SiteIDs map[int]string
-	Seed    *rand.Rand
+	Cities       map[string]*City
+	Aliens       map[int]*Alien
+	SiteIDs      map[int]string
+	Seed         *rand.Rand
+	AdvancedTech bool
 }
 
 // NewWorld : initializes world and returns reference
-func NewWorld(seed *rand.Rand) *World {
+func NewWorld(seed *rand.Rand, advancedTech bool) *World {
 	return &World{
-		Cities:  make(map[string]*City),
-		Aliens:  make(map[int]*Alien),
-		SiteIDs: make(map[int]string),
-		Seed:    seed,
+		Cities:       make(map[string]*City),
+		Aliens:       make(map[int]*Alien),
+		SiteIDs:      make(map[int]string),
+		Seed:         seed,
+		AdvancedTech: advancedTech,
 	}
 }
 
@@ -33,18 +35,13 @@ func (w *World) PopulateAliens(numAliens int) error {
 	}
 
 	for i := 1; i <= numAliens; i++ {
-		// Generate random landing site ID for this alien
-		siteID := w.getSeed().Intn(w.NumCities())
-
-		targetCity, err := w.GetCityByID(siteID)
+		targetCity, err := w.GetCityByID(w.getSeed().Intn(w.NumCities()))
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// Make a new Alien and place it in the target city
 		alien := NewAlien(i, targetCity)
 		w.ProcessNewAlien(alien)
-		// Update the city so it's aware of its new guest
 		targetCity.AlienArrival(alien)
 	}
 	return nil
@@ -52,9 +49,7 @@ func (w *World) PopulateAliens(numAliens int) error {
 
 // ProcessNewCity : creates a new city and adds it to the world
 func (w *World) ProcessNewCity(city *City) {
-	// Add the city to Cities
 	w.Cities[city.GetName()] = city
-	// Add the city to SiteIDs
 	w.SiteIDs[w.numSites()] = city.GetName()
 }
 
@@ -70,14 +65,14 @@ func (w *World) MoveAliens(turn int) {
 		if alien != nil {
 			if !alien.IsTrapped() {
 				alien.Move(w.getSeed())
+			} else {
+				// If advanced tech is enabled, aliens can teleport
+				if w.hasAdvancedTech() {
+					city := w.GetTeleportCity()
+					printTeleport(turn, alien.GetID(), city.GetName())
+					alien.Teleport(city)
+				}
 			}
-			// else {
-			// 	if advancedTech {
-			// 		city := w.GetTeleportCity()
-			// 		printTeleport(alien.GetID(), turn, city.GetName())
-			// 		alien.Teleport(city)
-			// 	}
-			// }
 		}
 	}
 }
@@ -97,18 +92,16 @@ func (w *World) DestroyCities(turn int) {
 
 // DestroyCity : destroys a City, removing all Aliens and Paths
 func (w *World) DestroyCity(city *City) {
-	city.RemoveAllPaths()
-
 	for _, id := range city.GetAlienIDs() {
 		delete(w.Aliens, id)
 	}
-
+	city.RemoveAllPaths()
 	delete(w.Cities, city.GetName())
 }
 
 // GetTeleportCity : returns a teleportable city
 func (w *World) GetTeleportCity() *City {
-	// Declare anon function first so it's within scope
+	// Declare anon function so it's within scope
 	var randTeleportableCity func() *City
 
 	randTeleportableCity = func() *City {
@@ -177,6 +170,10 @@ func (w *World) Print() {
 // --------------------------------------------------
 func (w *World) getSeed() *rand.Rand {
 	return w.Seed
+}
+
+func (w *World) hasAdvancedTech() bool {
+	return w.AdvancedTech
 }
 
 func (w *World) numSites() int {

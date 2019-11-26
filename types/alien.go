@@ -39,12 +39,10 @@ func (a *Alien) IsTrapped() bool {
 // Teleport : teleports the alien to a new city, only allowed if the alien
 //			  is trapped
 func (a *Alien) Teleport(portCity *City) {
-	if a.IsTrapped() {
-		currCity := a.GetLocation()
-		currCity.AlienDeparture(a)
-		portCity.AlienArrival(a)
-		a.Location = portCity
-	}
+	currCity := a.GetLocation()
+	currCity.AlienDeparture(a)
+	portCity.AlienArrival(a)
+	a.Location = portCity
 }
 
 // GetID : returns the Alien's unique identifier

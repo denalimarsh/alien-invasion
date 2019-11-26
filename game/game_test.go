@@ -3,7 +3,6 @@ package game
 import (
 	"testing"
 
-	"github.com/invasion/game"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,30 +10,27 @@ func TestSetup(t *testing.T) {
 	// Load our generic file
 	file := LoadFilePath()
 
-	Init()
+	// Initalize a new World
+	Init(false)
 
-	// Capture Setup's output for testing
-	output := CaptureOutput(func() {
-		err := game.Setup(file, TestNumAliens)
-		assert.Nil(t, err)
-	})
+	err := Setup(file, TestNumAliens)
+	assert.Nil(t, err)
 
-	// Confirm that the output contain's the expected value
-	assert.Contains(t, output, "The World:")
 }
 
 func TestPlay(t *testing.T) {
 	// Load our generic file
 	file := LoadFilePath()
 
-	Init()
+	// Initalize a new World
+	Init(false)
 
-	err := game.Setup(file, TestNumAliens)
+	err := Setup(file, TestNumAliens)
 	assert.Nil(t, err)
 
 	// Capture Invade's output for testing
 	output := CaptureOutput(func() {
-		err = game.Play()
+		err = Play()
 		assert.Nil(t, err)
 	})
 

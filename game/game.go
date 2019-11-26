@@ -9,15 +9,18 @@ import (
 	"github.com/denalimarsh/invasion/utils"
 )
 
+// TurnLimit : maximum turns allowed
+const TurnLimit = 10000
+
 var world *types.World
 
-// Init : initializes the world with a new RNG seed
-func Init() {
+// Init : initializes the World with a new RNG seed
+func Init(advancedTech bool) {
 	seed := rand.New(rand.NewSource(time.Now().UnixNano()))
-	world = types.NewWorld(seed)
+	world = types.NewWorld(seed, advancedTech)
 }
 
-// Setup : generates a new World by processing the input file, then
+// Setup : processes the input file to generate a new World, then
 //		   randomly populates the World's Cities with Alien invaders
 func Setup(file string, numAliens int) error {
 	err := utils.LoadFileToWorld(world, file)
@@ -33,12 +36,12 @@ func Setup(file string, numAliens int) error {
 	return nil
 }
 
-// Play : begins the invasion sequence which will execute for
-//		    10,000 turns or until there is >= 1 alien remaining
+// Play : executes play sequence for 10,000 turns or until
+//		  there is >= 1 Alien in the World
 func Play() error {
 	logGameStart()
 	turn := 1
-	for turn <= 10000 && world.NumAliens() > 1 {
+	for turn < TurnLimit && world.NumAliens() > 1 {
 		world.MoveAliens(turn)
 		world.DestroyCities(turn)
 		turn++
