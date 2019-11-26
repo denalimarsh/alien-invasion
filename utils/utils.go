@@ -9,8 +9,8 @@ import (
 	"github.com/denalimarsh/invasion/types"
 )
 
-// LoadFileToWorld : processes a text file containing a list of
-//						cities and paths into a World.
+// LoadFileToWorld : processes a text file containing a list of cities
+//		     and paths into a World.
 func LoadFileToWorld(world *types.World, filePath string) error {
 
 	// Open file and create line scanner
