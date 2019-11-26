@@ -8,14 +8,13 @@ Mad aliens are about to invade earth and we have been tasked with simulating the
     - inFile contains clean, digestible data and is always in .txt format
     - valid file path is given as command line argument
 - Paths are not automatically bidirectional, such that `boston east=Berlin west=Honolulu` allows an alien to move from Boston to Berlin, but not from Berlin to Boston
-- Once destroyed, cities are removed from the world but have their name retained for printing at the end of the game
 
 ## Installation
 If you have already downloaded go and set your GOPATH, installing invasion is easy
-- 1. Clone the repo
-- 2. Run `go install` from the root directory
+- Clone the repo
+- Run `go install` from the root directory
 
-If not, getting set up with go is painless
+If not, don't worry - getting set up with go is painless
 - [Download go](https://golang.org/dl/)
 - [Using GOPATH](https://github.com/golang/go/wiki/GOPATH)
 
@@ -39,6 +38,7 @@ Flags:
 Use "invasion [command] --help" for more information about a command.
 ```
 
+    
 Start the game with `invasion start --file="./assets/small_world.txt" --numAliens=10`:
 ```
 $ invasion start --file="./assets/small_world.txt" --numAliens=10
@@ -75,7 +75,9 @@ $ invasion start --file="./assets/small_world.txt" --numAliens=10
 2019/11/26 00:34:16 -------------------------------------------------
 ```
 
-As aliens destroy cities, they have a habit of cutting their own transporation lines and getting trapped until the game terminates. If you'd like to aid in the planetary conquest of Earth, you can improve alien technology with the `--advancedTech=true` flag. With their new technology, aliens are able to teleport out of trapped cities whenever they get stuck.
+As aliens destroy cities, they have a habit of cutting their own transporation lines and getting trapped until the game terminates.
+
+If you'd like to aid in the planetary conquest of Earth, you can improve alien technology with the `--advancedTech=true` flag. With their new technology, aliens are able to teleport out of trapped cities whenever they get stuck.
 
 You can try it out with `invasion start --file="./assets/big_world.txt" --numAliens=10 --advancedTech=true`:
 ```
@@ -113,4 +115,7 @@ go test ./...
 ```
 
 ## Considerations
-The aliens are still pretty weak. Even with advanced technology, it's common for at least two aliens to end up in mutually exclusive cycles which leave them effectively isolated. Some potential technological improvements that could help our alien friends might include mass teleporting every 100 turns without a city destruction, as well as repositioning themselves on turn 0 should they be initially placed in an already populated city (and therefore instantly killed). It is also likely that the static world.txt files currently used are poorly suited for alien transportation, a hypothesis that we could test in next iteration by adding dynamic world.txt file generation and running tests against them to uncover the optimal number of cities and paths. Another simple, interesting additional feature could be the introduction of numerous alien lives or team allegiances. For example, if an alien has three lives it could teleport away from city destruction twice before being killed in the final encounter. Teams could potentially make the game much more complex, depending on how interactions between same-team and opposite-team alien encounters are implemented.
+The aliens are still pretty weak. Even with advanced technology, it's common for at least two aliens to end up in mutually exclusive cycles which leave them effectively isolated. Some potential technological improvements that could help our alien friends might include mass teleporting every 100 turns without a city destruction, as well as repositioning themselves on turn 0 should they be initially placed in an already populated city (and therefore instantly killed). It is also likely that the static world.txt files currently used are poorly suited for alien transportation, a hypothesis that we could test in next iteration by adding dynamic world.txt file generation and running tests against them to uncover the optimal number of cities and paths.
+
+
+Another simple, interesting additional feature could be the introduction of numerous alien lives or team allegiances. For example, if an alien has three lives it could teleport away from city destruction twice before being killed in the final encounter. Teams could potentially make the game much more complex, depending on how interactions between same-team and opposite-team alien encounters are implemented.
