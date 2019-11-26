@@ -36,7 +36,7 @@ var startCmd = &cobra.Command{
 		}
 
 		// Executes invasion as a 2-phase turn based game
-		err = game.Play()
+		err = game.Invade()
 		if err != nil {
 			log.Fatal(err)
 		}

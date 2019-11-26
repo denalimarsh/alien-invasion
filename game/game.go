@@ -10,24 +10,25 @@ import (
 	"github.com/denalimarsh/invasion/types"
 )
 
-var world types.World
+var world *types.World
+
+// InitWorld : initalizes a new source of randomness and world
+func InitWorld() {
+	// Generate seed for worldwide RNG
+	seed := rand.New(rand.NewSource(time.Now().UnixNano()))
+	// Create a new world
+	world = types.NewWorld(seed)
+}
 
 // Setup : generates a new World by processing the input file, then
 //		   randomly populates the World's Cities with Alien invaders
 func Setup(file string, numAliens int) error {
-	// Generate unique source of randomness
-	rand.Seed(time.Now().UnixNano())
-
-	// Create a new world
-	world = types.NewWorld()
-
 	// Add cities, paths to world from given file
-	err := ProcessFileToWorld(file, &world)
+	err := ProcessFileToWorld(file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Print initial world state
 	world.Print()
 
 	// Randomly place aliens in cities
@@ -39,9 +40,9 @@ func Setup(file string, numAliens int) error {
 	return nil
 }
 
-// Play : begins the invasion sequence which will execute for
-//		  10,000 turns or until there is >= 1 alien remaining
-func Play() error {
+// Invade : begins the invasion sequence which will execute for
+//		    10,000 turns or until there is >= 1 alien remaining
+func Invade() error {
 	logInvasionStart()
 	turn := 1
 	for turn <= 10000 && world.NumAliens() > 1 {
@@ -57,11 +58,10 @@ func Play() error {
 //			Unexported helper methods
 // --------------------------------------------------
 // moveAliens : randomaly moves all Aliens from their current location
-//				to a new location (if available)
+//				to a new location if it is available
 func moveAliens() {
 	// Generate a new source of randomness each turn
 	r := rand.New(rand.NewSource(time.Now().Unix()))
-
 	for i := 1; i <= world.NumAliens(); i++ {
 		alien, _ := world.GetAlienByID(i)
 		if alien != nil {

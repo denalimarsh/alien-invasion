@@ -36,7 +36,7 @@ func StringToDirection(text string) (Direction, error) {
 	}
 }
 
-// String :
+// String : returns the Direction as a string
 func (d Direction) String() (string, error) {
 	switch d {
 	case North:

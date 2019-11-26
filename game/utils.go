@@ -11,7 +11,7 @@ import (
 
 // ProcessFileToWorld : processes a text file containing a list of
 //						cities and paths into a World.
-func ProcessFileToWorld(filePath string, world *types.World) error {
+func ProcessFileToWorld(filePath string) error {
 	// Open file and create line scanner
 	file, err := os.Open(filePath)
 	if err != nil {

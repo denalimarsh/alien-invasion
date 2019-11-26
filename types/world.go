@@ -8,17 +8,19 @@ import (
 
 // World : contains all cities, aliens, and cities indexed by number
 type World struct {
-	Cities  map[string]*City
-	Aliens  map[int]*Alien
-	SiteIDs map[int]string
+	Cities   map[string]*City
+	Aliens   map[int]*Alien
+	SiteIDs  map[int]string
+	RandSeed *rand.Rand
 }
 
 // NewWorld : initializes world and returns reference
-func NewWorld() World {
-	return World{
-		Cities:  make(map[string]*City),
-		Aliens:  make(map[int]*Alien),
-		SiteIDs: make(map[int]string),
+func NewWorld(seed *rand.Rand) *World {
+	return &World{
+		Cities:   make(map[string]*City),
+		Aliens:   make(map[int]*Alien),
+		SiteIDs:  make(map[int]string),
+		RandSeed: seed,
 	}
 }
 
