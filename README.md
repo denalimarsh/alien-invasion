@@ -11,11 +11,9 @@ Mad aliens are about to invade earth and we have been tasked with simulating the
 - Once destroyed, cities are removed from the world but have their name retained for printing at the end of the game
 
 ## Installation
-If you have already downloaded go and set your GOPATH, installing invasion is easy:
-```
-dep ensure
-go install main.go
-```
+If you have already downloaded go and set your GOPATH, installing invasion is easy
+- 1. Clone the repo
+- 2. Run `go install` from the root directory
 
 If not, getting set up with go is painless
 - [Download go](https://golang.org/dl/)
