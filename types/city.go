@@ -1,60 +1,120 @@
 package types
 
-// City : struct containing the city's name, aliens, and paths
+import (
+	"errors"
+	"math/rand"
+)
+
+// City : a node which contains a unique id, collection of aliens,
+//		  and a list of all incoming/outgoing paths.
 type City struct {
-	Name      string
-	Aliens    map[int]*Alien
-	Paths     map[int]*Path
-	Destroyed bool
+	Name          string
+	OutgoingPaths []*Path
+	IncomingPaths []*Path
+	Aliens        map[int]*Alien
 }
 
-// NewCity :
+// NewCity : returns a new City
 func NewCity(name string) *City {
 	return &City{
-		Name:      name,
-		Aliens:    make(map[int]*Alien),
-		Paths:     make(map[int]*Path), // TODO: change key type from int to Direction?
-		Destroyed: false,
+		Name:          name,
+		OutgoingPaths: make([]*Path, 0),
+		IncomingPaths: make([]*Path, 0),
+		Aliens:        make(map[int]*Alien),
 	}
 }
 
-// AddAlien :
-func (c *City) AddAlien(alien *Alien) {
-	c.Aliens[alien.ID] = alien
+// AlienArrival : records the arrival of an alien visitor
+func (c *City) AlienArrival(alien *Alien) {
+	c.Aliens[alien.GetID()] = alien
 }
 
-// AddPath :
-func (c *City) AddPath(path *Path) {
-	c.Paths[path.Direction.Integer()] = path
+// AlienDeparture : records the departure of an alien guest
+func (c *City) AlienDeparture(alien *Alien) {
+	delete(c.Aliens, alien.GetID())
 }
 
-// GetPath :
-func (c *City) GetPath(i int) *Path {
-	return c.Paths[i]
+// GetAlienIDs : get the unique IDs
+func (c *City) GetAlienIDs() []int {
+	ids := make([]int, 0, len(c.Aliens))
+	for id := range c.Aliens {
+		ids = append(ids, id)
+	}
+	return ids
 }
 
-// GetRandomPath :
-// TODO: Need source of randomness for this f(x)
-// func (c City) GetRandomPath() *Path {
-// 	return c.Paths[rand.Intn(c.NumPaths())]
-// }
+// RegisterOutgoingPath : registers an outgoing path e.g. (This_City -> Other_City)
+func (c *City) RegisterOutgoingPath(path *Path) {
+	c.OutgoingPaths = append(c.OutgoingPaths, path)
+}
 
-// NumAliens :
+// RegisterIncomingPath : registers an incoming path e.g. (Other_City -> This_City)
+func (c *City) RegisterIncomingPath(path *Path) {
+	c.IncomingPaths = append(c.IncomingPaths, path)
+}
+
+// GetRandomOutgoingPath : gets a random outgoing path
+func (c City) GetRandomOutgoingPath(r *rand.Rand) (*Path, error) {
+	// Check error. This should never be hit as this error is already handled
+	if c.NumOutgoingPaths() == 0 {
+		return nil, errors.New("this city has no remaining outgoing paths")
+	}
+	return c.OutgoingPaths[r.Intn(c.NumOutgoingPaths())], nil
+}
+
+// RemoveAllPaths : removes all paths worldwide which reference this city
+func (c *City) RemoveAllPaths() {
+	// Remove all outgoing paths
+	c.OutgoingPaths = c.OutgoingPaths[:0]
+
+	// Remove all incoming paths
+	for i := 0; i < len(c.IncomingPaths); i++ {
+		incomingPath := c.IncomingPaths[i]
+		// Check that the path has not already been removed
+		if incomingPath != nil {
+			cityWithIncomingPath := incomingPath.GetCity()
+			cityWithIncomingPath.removeOutgoingPath(c.GetName())
+		}
+	}
+}
+
+// GetName : returns the City's name
+func (c *City) GetName() string {
+	return c.Name
+}
+
+// NumAliens : returns the current number of aliens hosted by the city
 func (c *City) NumAliens() int {
 	return len(c.Aliens)
 }
 
-// PathsToString :
-func (c *City) PathsToString() string {
+// NumOutgoingPaths : returns the current number of outgoing paths
+func (c *City) NumOutgoingPaths() int {
+	return len(c.OutgoingPaths)
+}
+
+// OutgoingPathsToString : formats the City's outgoing paths in string
+//						   representation for printing
+func (c *City) OutgoingPathsToString() string {
 	var buffer string
-	for i := 0; i < 4; i++ {
-		path := c.Paths[i]
+	for i := 0; i < c.NumOutgoingPaths(); i++ {
+		path := c.OutgoingPaths[i]
 		if path != nil {
-			if path.Traversable {
-				pathStr := path.String()
-				buffer += pathStr + " "
-			}
+			pathStr := path.String()
+			buffer += pathStr + " "
 		}
 	}
 	return buffer
+}
+
+// --------------------------------------------------
+//			Unexported helper methods
+// --------------------------------------------------
+// removeOutgoingPath : instructs another city to remove any paths which reference this citiy
+func (c *City) removeOutgoingPath(toCity string) {
+	for i := len(c.OutgoingPaths) - 1; i >= 0; i-- {
+		if c.OutgoingPaths[i].GetCity().GetName() == toCity {
+			c.OutgoingPaths = append(c.OutgoingPaths[:i], c.OutgoingPaths[i+1:]...)
+		}
+	}
 }

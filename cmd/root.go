@@ -9,9 +9,10 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "invasion",
-	Short: "description", // TODO: description
+	Short: "invasion unleashes an army of aliens on an unsuspecting planet",
 }
 
+// Execute : execute root command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

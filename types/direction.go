@@ -8,19 +8,19 @@ import (
 type Direction string
 
 const (
-	// North :
+	// North : cardinal direction #1
 	North = "north"
-	// East :
+	// East : cardinal direction #2
 	East = "east"
-	// South :
+	// South : cardinal direction #3
 	South = "south"
-	// West :
+	// West : cardinal direction #4
 	West = "west"
-	// Default :
+	// Default : empty string indicates invalid value
 	Default = ""
 )
 
-// StringToDirection : returns string as direction
+// StringToDirection : if valid, casts string to a Direction
 func StringToDirection(text string) (Direction, error) {
 	switch text {
 	case "north":
@@ -32,7 +32,7 @@ func StringToDirection(text string) (Direction, error) {
 	case "west":
 		return West, nil
 	default:
-		return Default, nil // TODO: should be error?
+		return Default, errors.New("invalid direction")
 	}
 }
 
@@ -52,7 +52,7 @@ func (d Direction) String() (string, error) {
 	}
 }
 
-// Integer :
+// Integer : returns the Direction's integer representation
 func (d Direction) Integer() int {
 	switch d {
 	case North:

@@ -1,22 +1,42 @@
-Beijing south=Seoul west=Rome
+Beijing south=Seoul west=Chicago
 Mumbai north=Delhi west=Cairo east=Beijing
-Istanbul east=Beijing west=Paris
-Tokyo east=Beijing west=Sacramento
-Delhi south=Melbourne west=Cairo east=Seoul
-Cairo north=Rome east=Kabul
-Seoul south=Singapore
-Hanoi south=Sydney west=Kabul
-Singapore north=Hanoi west=Delhi south=Sydney
+Tokyo south=Melbourne
+Istanbul east=Beijing west=Paris south=Tokyo
+Tokyonorth=Berlin south=Kabul
+Delhi east=Seoul
+Cairo north=Anchorage east=Portland
+Seoul south=Singapore west=Chicago
+Hanoi north=Chicago east=Seoul
+Singapore east=Phoenix west=Boston
 Sydney north=Seoul east=Melbourne north=Tokyo
 Copenhagen south=Berlin west=London
 Melbourne west=Sydney north=Seoul
-Kabul south=Delhi east=Hanoi
-Rome north=Paris east=Istanbul west=Madrid south=Cairo
+Kabul south=Delhi west=Berlin
+Rome north=Paris
 Toronto south=Chicago east=Tokyo west=London
-Chicago north=Toronto south=Houston west=Sacramento
-Houston north=Chicago east=Madrid west=Sacramento
-Paris north=Copenhagen south=Madrid east=Berlin west=London
+Chicago north=Madison
+Houston west=Sacramento
+Paris north=Copenhagen south=Madrid east=Boston west=London
 Berlin west=Paris north=Copenhagen south=Rome
-London south=Madrid west=Berlin east=Sacramento
-Madrid north=Paris east=Rome
+London west=Berlin east=Sacramento
+Madrid north=Paris east=Rome west=Chicago
 Sacramento north=Toronto east=Houston west=Tokyo
+Philadelphia north=Toronto east=Houston
+Phoenix north=Madrid south=Rome east=Paris
+Dallas west=Madrid south=Cairo
+Honolulu north=Cairo south=Toronto east=Seoul west=Rome
+Jacksonville north=Copenhagen east=Copenhagen west=Cairo
+Detroit east=Phoenix west=Nashville
+Seattle north=Rome east=Kabul west=Toronto
+Boston north=London
+Nashville north=Fresno south=Honolulu east=Phoenix west=Boston
+Balitmore east=Istanbul
+Portland south=Melbourne west=Cairo east=Seoul
+Fresno north=Hanoi
+Tampa north=Chicago west=Sacramento
+Bakersfield south=Sydney west=Kabul
+Anchorage south=Delhi east=Hanoi
+Stockton east=Portland west=Jacksonville south=Boise
+Orlando north=Toronto
+Madison east=Sydney west=Paris
+Boise north=Madison south=Tokyo

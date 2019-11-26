@@ -1,0 +1,10 @@
+Beijing south=Mumbai west=Tokyo
+Mumbai north=Istanbul west=Cairo east=Beijing
+Paris south=Cairo
+Istanbul east=Beijing west=Paris south=Tokyo
+Tokyo north=Istanbul south=Delhi
+Delhi east=Seoul
+Cairo north=Mumbai east=Seoul west=Paris
+Seoul south=Cairo west=Chicago
+Hanoi north=Chicago east=Seoul
+

@@ -9,8 +9,9 @@ import (
 	"github.com/denalimarsh/invasion/types"
 )
 
-// ProcessFile :
-func ProcessFile(filePath string, world *types.World) error {
+// ProcessFileToWorld : processes a text file containing a list of
+//						cities and paths into a World.
+func ProcessFileToWorld(filePath string, world *types.World) error {
 	// Open file and create line scanner
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -19,11 +20,13 @@ func ProcessFile(filePath string, world *types.World) error {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
-	// Scan each line,
+	// Scan each line
 	for scanner.Scan() {
 		// Split the line on space
-		text := strings.Split(scanner.Text(), " ")
-		processLine(text, world)
+		text := strings.Split(strings.TrimSpace(scanner.Text()), " ")
+		if len(text) > 0 {
+			processLine(text, world)
+		}
 	}
 	// While loop breaks on error or EOF, check for error
 	err = scanner.Err()
@@ -34,47 +37,41 @@ func ProcessFile(filePath string, world *types.World) error {
 	return nil
 }
 
-// processLine : processes a line into a City
+// processLine : processes a line of text to create a city along with its paths
 func processLine(words []string, world *types.World) {
-	// Attempt to load city
-	cityName := words[0]
-	city, err := world.GetCity(cityName)
-
-	// If no result, create a new city
+	// Attempt to load the source city
+	srcCityName := words[0]
+	srcCity, err := world.GetCityByName(srcCityName)
+	// If source city doesn't exist, create and process it
 	if err != nil {
-		// TODO: Either add this check below as well, or improve it
-		if len(words) == 1 {
-			log.Printf("'%v' has no paths and is inaccessible. Ignoring...", cityName)
-		} else {
-			city = types.NewCity(cityName)
-			world.AddCity(city)
-			world.AddLandingSite(cityName)
-		}
+		srcCity = types.NewCity(srcCityName)
+		world.ProcessNewCity(srcCity)
 	}
 
-	// TODO: input validation on words
 	for i := 1; i < len(words); i++ {
 		pathText := strings.Split(strings.TrimSpace(words[i]), "=")
 
-		// Get cardinal direction
-		direction, err := types.StringToDirection(pathText[0])
+		// Get cardinal direction, must be valid or world generation will fail
+		direction, err := types.StringToDirection(strings.ToLower(pathText[0]))
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// Attempt to load destination city
+		// Attempt to load the named destination city
 		destCityName := strings.TrimSpace(pathText[1])
-		destCity, err := world.GetCity(destCityName)
-
-		// Create a new city for the destination city
+		destCity, err := world.GetCityByName(destCityName)
+		// If destination city doesn't exist, create and process it
 		if err != nil {
 			destCity = types.NewCity(destCityName)
-			world.AddCity(destCity)
-			world.AddLandingSite(destCityName)
+			world.ProcessNewCity(destCity)
 		}
 
-		// Create a new path and add it to the city
-		path := types.NewPath(city, direction, destCity)
-		city.AddPath(path)
+		// Create a new outgoing path and add it to the src city
+		outgoingPath := types.NewPath(destCity, direction)
+		srcCity.RegisterOutgoingPath(outgoingPath)
+
+		// Create a new incoming path and add it to the dest city
+		incomingPath := types.NewPath(srcCity, direction)
+		destCity.RegisterIncomingPath(incomingPath)
 	}
 }

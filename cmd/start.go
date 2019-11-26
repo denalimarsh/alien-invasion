@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -10,55 +9,51 @@ import (
 	"github.com/spf13/viper"
 )
 
-const FlagInFile = "file"
-const FlagNumberAliens = "N"
+const flagInFile = "file"
+const flagNumberAliens = "N"
 
-// startCmd represents the start command
+// startCmd : represents the start command
 var startCmd = &cobra.Command{
 	Use:     "start",
 	Short:   "starts the extraterrestrial invasion of a world",
 	Example: "invasion --file=\"./assets/world.txt\" --N=",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Parse flags
-		filePath := viper.GetString(FlagInFile)
+		filePath := viper.GetString(flagInFile)
 		if strings.TrimSpace(filePath) == "" {
 			log.Fatal("invalid file path")
 		}
 
-		numAliens := viper.GetInt(FlagNumberAliens)
+		numAliens := viper.GetInt(flagNumberAliens)
 		if numAliens <= 0 {
 			log.Fatal("invalid number of aliens")
 		}
 
-		fmt.Println("filePath: ", filePath)
-		fmt.Println("numAliens: ", numAliens)
-
-		log.Printf("Setting up the game...")
+		// Generates a world, adds Cities, Paths, and Aliens
 		err := game.Setup(filePath, numAliens)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// TODO: Game play
-		// log.Printf("Playing the game...")
-		// err = game.Play()
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-
+		// Executes invasion as a 2-phase turn based game
+		err = game.Play()
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
+// init : prepares required flags and adds them to the start cmd
 func init() {
 	rootCmd.AddCommand(startCmd)
 
 	// Add flags and mark as required
-	startCmd.PersistentFlags().String(FlagInFile, "", "Path to start file")
-	startCmd.PersistentFlags().Int(FlagNumberAliens, 10, "Number of aliens participating in the invasion")
-	startCmd.MarkFlagRequired(FlagInFile)
-	startCmd.MarkFlagRequired(FlagNumberAliens)
+	startCmd.PersistentFlags().String(flagInFile, "./assets/world.txt", "Path to start file")
+	startCmd.PersistentFlags().Int(flagNumberAliens, 10, "Number of aliens participating in the invasion")
+	startCmd.MarkFlagRequired(flagInFile)
+	startCmd.MarkFlagRequired(flagNumberAliens)
 
 	// Bind flags
-	viper.BindPFlag(FlagInFile, startCmd.Flag(FlagInFile))
-	viper.BindPFlag(FlagNumberAliens, startCmd.Flag(FlagNumberAliens))
+	viper.BindPFlag(flagInFile, startCmd.Flag(flagInFile))
+	viper.BindPFlag(flagNumberAliens, startCmd.Flag(flagNumberAliens))
 }

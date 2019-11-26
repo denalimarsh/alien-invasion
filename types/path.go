@@ -2,30 +2,36 @@ package types
 
 import "log"
 
-// Path :
+// Path : a direct connection between two cities
 type Path struct {
-	Origin      *City
-	Direction   Direction
-	Destination *City
-	Traversable bool
+	City      *City
+	Direction Direction
 }
 
-// NewPath :
-func NewPath(origin *City, direction Direction, destination *City) *Path {
+// NewPath : returns a new Path
+func NewPath(city *City, direction Direction) *Path {
 	return &Path{
-		Origin:      origin,
-		Destination: destination,
-		Direction:   direction,
-		Traversable: true,
+		City:      city,
+		Direction: direction,
 	}
 }
 
-// String :
+// GetDirection : returns the Path's Direction
+func (p *Path) GetDirection() Direction {
+	return p.Direction
+}
+
+// GetCity : returns the Path's City
+func (p *Path) GetCity() *City {
+	return p.City
+}
+
+// String : returns the Path's string representation
 func (p *Path) String() string {
-	direction, err := p.Direction.String()
+	direction, err := p.GetDirection().String()
 	if err != nil {
 		log.Fatal(err)
 	}
-	destination := p.Destination.Name
+	destination := p.GetCity().GetName()
 	return direction + "=" + destination
 }
