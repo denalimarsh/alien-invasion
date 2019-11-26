@@ -6,39 +6,46 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSetup(t *testing.T) {
-	// Initialize the world
-	InitWorld()
+func TestNewGame(t *testing.T) {
+	game := NewGame()
 
-	// Setup the world using the generic file
+	// Confirm that the game has been instantiated
+	assert.NotNil(t, game.getWorld())
+	assert.NotNil(t, game.getRandSeed())
+}
+
+func TestSetup(t *testing.T) {
+	// Load our generic file
 	file := LoadFilePath()
+
+	game := NewGame()
 
 	// Capture Setup's output for testing
 	output := CaptureOutput(func() {
-		err := Setup(file, TestNumAliens)
+		err := game.Setup(file, TestNumAliens)
 		assert.Nil(t, err)
 	})
 
 	// Confirm that the output contain's the expected value
-	assert.Contains(t, output, "The world:")
+	assert.Contains(t, output, "The World:")
 }
 
-func TestInvade(t *testing.T) {
-	// Initialize the world
-	InitWorld()
-
-	// Setup the world using the generic file
+func TestPlay(t *testing.T) {
+	// Load our generic file
 	file := LoadFilePath()
-	err := Setup(file, TestNumAliens)
+
+	game := NewGame()
+
+	err := game.Setup(file, TestNumAliens)
 	assert.Nil(t, err)
 
-	// Capture Setup's output for testing
+	// Capture Invade's output for testing
 	output := CaptureOutput(func() {
-		err = Invade()
+		err = game.Play()
 		assert.Nil(t, err)
 	})
 
 	// Confirm that the output contain's the expected values
-	assert.Contains(t, output, "Aliens, begin the invasion!")
-	assert.Contains(t, output, "Invasion completed on turn")
+	assert.Contains(t, output, "The game has started!")
+	assert.Contains(t, output, "Game completed on turn")
 }

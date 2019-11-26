@@ -10,29 +10,37 @@ import (
 	"github.com/denalimarsh/invasion/types"
 )
 
-var world *types.World
+// Game : game contains world and a random seed for game RNG
+type Game struct {
+	World    *types.World
+	RandSeed *rand.Rand
+}
 
-// InitWorld : initalizes a new source of randomness and world
-func InitWorld() {
+// NewGame : initializes a new game instance
+func NewGame() *Game {
 	// Generate seed for worldwide RNG
 	seed := rand.New(rand.NewSource(time.Now().UnixNano()))
-	// Create a new world
-	world = types.NewWorld(seed)
+	world := types.NewWorld()
+
+	return &Game{
+		World:    world,
+		RandSeed: seed,
+	}
 }
 
 // Setup : generates a new World by processing the input file, then
 //		   randomly populates the World's Cities with Alien invaders
-func Setup(file string, numAliens int) error {
+func (g *Game) Setup(file string, numAliens int) error {
 	// Add cities, paths to world from given file
-	err := ProcessFileToWorld(file)
+	err := g.LoadFileToWorld(file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	world.Print()
+	g.getWorld().Print()
 
 	// Randomly place aliens in cities
-	err = world.PopulateAliens(numAliens)
+	err = g.getWorld().PopulateAliens(numAliens, g.getRandSeed())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,17 +48,17 @@ func Setup(file string, numAliens int) error {
 	return nil
 }
 
-// Invade : begins the invasion sequence which will execute for
+// Play : begins the invasion sequence which will execute for
 //		    10,000 turns or until there is >= 1 alien remaining
-func Invade() error {
-	logInvasionStart()
+func (g *Game) Play() error {
+	g.logGameStart()
 	turn := 1
-	for turn <= 10000 && world.NumAliens() > 1 {
-		moveAliens()
-		cleanWorld(turn)
+	for turn <= 10000 && g.getWorld().NumAliens() > 1 {
+		g.moveAliens()
+		g.cleanWorld(turn)
 		turn++
 	}
-	logInvasionEnd(turn)
+	g.logGameEnd(turn)
 	return nil
 }
 
@@ -59,13 +67,11 @@ func Invade() error {
 // --------------------------------------------------
 // moveAliens : randomaly moves all Aliens from their current location
 //				to a new location if it is available
-func moveAliens() {
-	// Generate a new source of randomness each turn
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	for i := 1; i <= world.NumAliens(); i++ {
-		alien, _ := world.GetAlienByID(i)
+func (g *Game) moveAliens() {
+	for i := 1; i <= g.getWorld().NumAliens(); i++ {
+		alien, _ := g.getWorld().GetAlienByID(i)
 		if alien != nil {
-			alien.Move(r)
+			alien.Move(g.getRandSeed())
 		}
 	}
 }
@@ -73,32 +79,40 @@ func moveAliens() {
 // cleanWorld : removes any City which contains 2 or more Aliens, additionally
 //				removing all local Aliens and all Paths which reference the
 //				destroyed City
-func cleanWorld(turn int) {
-	for i := 0; i < world.NumCities(); i++ {
-		city, _ := world.GetCityByID(i)
+func (g *Game) cleanWorld(turn int) {
+	for i := 0; i < g.getWorld().NumCities(); i++ {
+		city, _ := g.getWorld().GetCityByID(i)
 		if city != nil {
 			if city.NumAliens() > 1 {
-				world.DestroyCity(city)
-				logCityDestroyed(turn, city.GetName(), city.GetAlienIDs())
+				g.getWorld().DestroyCity(city)
+				g.logCityDestroyed(turn, city.GetName(), city.GetAlienIDs())
 			}
 		}
 	}
 }
 
-func logInvasionStart() {
-	log.Println("Aliens, begin the invasion!")
+func (g *Game) logGameStart() {
+	log.Println("The game has started!")
 	log.Println("")
 }
 
-func logInvasionEnd(turn int) {
+func (g *Game) logGameEnd(turn int) {
 	log.Println("")
-	log.Printf("Invasion completed on turn %v.", turn)
-	world.Print()
+	log.Printf("Game completed on turn %v.", turn)
+	g.getWorld().Print()
 }
 
-func logCityDestroyed(turn int, city string, ids []int) {
+func (g *Game) logCityDestroyed(turn int, city string, ids []int) {
 	alienIDs := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ids)), ", "), "[]")
 	indexLastComma := strings.LastIndex(alienIDs, ",")
 	aliens := alienIDs[:indexLastComma] + " and" + alienIDs[indexLastComma+1:]
 	log.Printf("Turn %d: %s has been destroyed by aliens %s ", turn, city, aliens)
+}
+
+func (g *Game) getWorld() *types.World {
+	return g.World
+}
+
+func (g *Game) getRandSeed() *rand.Rand {
+	return g.RandSeed
 }

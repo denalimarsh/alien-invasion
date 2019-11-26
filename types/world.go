@@ -8,19 +8,17 @@ import (
 
 // World : contains all cities, aliens, and cities indexed by number
 type World struct {
-	Cities   map[string]*City
-	Aliens   map[int]*Alien
-	SiteIDs  map[int]string
-	RandSeed *rand.Rand
+	Cities  map[string]*City
+	Aliens  map[int]*Alien
+	SiteIDs map[int]string
 }
 
 // NewWorld : initializes world and returns reference
-func NewWorld(seed *rand.Rand) *World {
+func NewWorld() *World {
 	return &World{
-		Cities:   make(map[string]*City),
-		Aliens:   make(map[int]*Alien),
-		SiteIDs:  make(map[int]string),
-		RandSeed: seed,
+		Cities:  make(map[string]*City),
+		Aliens:  make(map[int]*Alien),
+		SiteIDs: make(map[int]string),
 	}
 }
 
@@ -38,14 +36,14 @@ func (w *World) ProcessNewAlien(alien *Alien) {
 }
 
 // PopulateAliens : randomly populates the world's cities with aliens
-func (w *World) PopulateAliens(numAliens int) error {
+func (w *World) PopulateAliens(numAliens int, r *rand.Rand) error {
 	if w.NumCities() <= 0 {
 		log.Fatal("world has no cities to populate")
 	}
 
 	for i := 1; i <= numAliens; i++ {
 		// Generate random landing site ID for this alien
-		siteID := rand.Intn(w.NumCities())
+		siteID := r.Intn(w.NumCities())
 
 		targetCity, err := w.GetCityByID(siteID)
 		if err != nil {
@@ -78,7 +76,6 @@ func (w *World) DestroyCity(city *City) {
 
 // GetCityByName : returns a City by name
 func (w *World) GetCityByName(city string) (*City, error) {
-
 	if w.containsCity(city) {
 		return w.Cities[city], nil
 	}
@@ -108,7 +105,7 @@ func (w *World) NumAliens() int {
 	return len(w.Aliens)
 }
 
-// Print :
+// Print : prints the world's cities and paths
 func (w *World) Print() {
 	printHeader()
 	for i := 0; i < w.NumCities(); i++ {
@@ -120,6 +117,7 @@ func (w *World) Print() {
 		cityText += city.OutgoingPathsToString()
 		log.Println(cityText)
 	}
+	printFooter()
 }
 
 // --------------------------------------------------
@@ -141,7 +139,11 @@ func (w *World) containsAlien(alien int) bool {
 
 func printHeader() {
 	log.Println()
+	log.Printf("\t\t\tThe World:")
 	log.Printf("-------------------------------------------------")
-	log.Printf("\t\t\tThe world:")
+}
+
+func printFooter() {
 	log.Printf("-------------------------------------------------")
+	log.Println()
 }

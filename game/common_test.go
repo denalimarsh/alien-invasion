@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	TestFilePath  = "/invasion/assets/world.txt"
+	TestFilePath  = "/invasion/assets/small_world.txt"
 	TestNumAliens = 5
 )
 

@@ -7,4 +7,4 @@ Delhi east=Seoul
 Cairo north=Mumbai east=Seoul west=Paris
 Seoul south=Cairo west=Chicago
 Hanoi north=Chicago east=Seoul
-
+Chicago east=Beijing

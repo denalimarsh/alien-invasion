@@ -9,9 +9,9 @@ import (
 	"github.com/denalimarsh/invasion/types"
 )
 
-// ProcessFileToWorld : processes a text file containing a list of
+// LoadFileToWorld : processes a text file containing a list of
 //						cities and paths into a World.
-func ProcessFileToWorld(filePath string) error {
+func (g *Game) LoadFileToWorld(filePath string) error {
 	// Open file and create line scanner
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -25,7 +25,7 @@ func ProcessFileToWorld(filePath string) error {
 		// Split the line on space
 		text := strings.Split(strings.TrimSpace(scanner.Text()), " ")
 		if len(text) > 0 {
-			processLine(text, world)
+			loadLineToCity(text, g.World)
 		}
 	}
 	// While loop breaks on error or EOF, check for error
@@ -37,8 +37,8 @@ func ProcessFileToWorld(filePath string) error {
 	return nil
 }
 
-// processLine : processes a line of text to create a city along with its paths
-func processLine(words []string, world *types.World) {
+// loadLineToCity : processes a line of text to create a city along with its paths
+func loadLineToCity(words []string, world *types.World) {
 	// Attempt to load the source city
 	srcCityName := words[0]
 	srcCity, err := world.GetCityByName(srcCityName)

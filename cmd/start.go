@@ -10,13 +10,13 @@ import (
 )
 
 const flagInFile = "file"
-const flagNumberAliens = "N"
+const flagNumberAliens = "numAliens"
 
 // startCmd : represents the start command
 var startCmd = &cobra.Command{
 	Use:     "start",
 	Short:   "starts the extraterrestrial invasion of a world",
-	Example: "invasion --file=\"./assets/world.txt\" --N=",
+	Example: "invasion --file=\"./assets/small_world.txt\" --numAliens=",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Parse flags
 		filePath := viper.GetString(flagInFile)
@@ -29,6 +29,8 @@ var startCmd = &cobra.Command{
 			log.Fatal("invalid number of aliens")
 		}
 
+		game := game.NewGame()
+
 		// Generates a world, adds Cities, Paths, and Aliens
 		err := game.Setup(filePath, numAliens)
 		if err != nil {
@@ -36,7 +38,7 @@ var startCmd = &cobra.Command{
 		}
 
 		// Executes invasion as a 2-phase turn based game
-		err = game.Invade()
+		err = game.Play()
 		if err != nil {
 			log.Fatal(err)
 		}
