@@ -1,4 +1,4 @@
-package game
+package utils
 
 import (
 	"bufio"
@@ -11,7 +11,8 @@ import (
 
 // LoadFileToWorld : processes a text file containing a list of
 //						cities and paths into a World.
-func (g *Game) LoadFileToWorld(filePath string) error {
+func LoadFileToWorld(world *types.World, filePath string) error {
+
 	// Open file and create line scanner
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -25,7 +26,7 @@ func (g *Game) LoadFileToWorld(filePath string) error {
 		// Split the line on space
 		text := strings.Split(strings.TrimSpace(scanner.Text()), " ")
 		if len(text) > 0 {
-			loadLineToCity(text, g.World)
+			loadLineToCity(text, world)
 		}
 	}
 	// While loop breaks on error or EOF, check for error

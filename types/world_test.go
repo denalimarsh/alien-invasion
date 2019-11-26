@@ -10,7 +10,7 @@ import (
 
 func TestNewWorld(t *testing.T) {
 	// Create a new world
-	world := NewWorld()
+	world := NewWorld(rand.New(rand.NewSource(time.Now().UnixNano())))
 
 	// Confirm that the world has been instantiated
 	assert.NotNil(t, world.Cities)
@@ -19,7 +19,7 @@ func TestNewWorld(t *testing.T) {
 }
 
 func TestProcessNewCity(t *testing.T) {
-	world := NewWorld()
+	world := NewWorld(rand.New(rand.NewSource(time.Now().UnixNano())))
 
 	// Process the city
 	city := NewCity(CityName1)
@@ -40,7 +40,7 @@ func TestProcessNewCity(t *testing.T) {
 }
 
 func TestProcessNewAlien(t *testing.T) {
-	world := NewWorld()
+	world := NewWorld(rand.New(rand.NewSource(time.Now().UnixNano())))
 	city := NewCity(CityName1)
 	alien := NewAlien(AlienID1, city)
 
@@ -58,8 +58,7 @@ func TestProcessNewAlien(t *testing.T) {
 }
 
 func TestPopulateAliens(t *testing.T) {
-	seed := rand.New(rand.NewSource(time.Now().UnixNano()))
-	world := NewWorld()
+	world := NewWorld(rand.New(rand.NewSource(time.Now().UnixNano())))
 
 	// Setup some new cities
 	city1 := NewCity(CityName1)
@@ -68,7 +67,7 @@ func TestPopulateAliens(t *testing.T) {
 	world.ProcessNewCity(city2)
 
 	// Populate the world with aliens
-	world.PopulateAliens(TestNumAliens, seed)
+	world.PopulateAliens(TestNumAliens)
 
 	// Confirm that the alien count has increased
 	numAliens := world.NumAliens()
@@ -76,7 +75,7 @@ func TestPopulateAliens(t *testing.T) {
 }
 
 func TestDestroyCity(t *testing.T) {
-	world := NewWorld()
+	world := NewWorld(rand.New(rand.NewSource(time.Now().UnixNano())))
 
 	// Setup a new city
 	city1 := NewCity(CityName1)

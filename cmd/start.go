@@ -29,9 +29,9 @@ var startCmd = &cobra.Command{
 			log.Fatal("invalid number of aliens")
 		}
 
-		game := game.NewGame()
+		game.Init()
 
-		// Generates a world, adds Cities, Paths, and Aliens
+		// Generates World's Cities, Paths, and Aliens
 		err := game.Setup(filePath, numAliens)
 		if err != nil {
 			log.Fatal(err)

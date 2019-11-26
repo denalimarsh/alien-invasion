@@ -3,22 +3,15 @@ package game
 import (
 	"testing"
 
+	"github.com/invasion/game"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestNewGame(t *testing.T) {
-	game := NewGame()
-
-	// Confirm that the game has been instantiated
-	assert.NotNil(t, game.getWorld())
-	assert.NotNil(t, game.getRandSeed())
-}
 
 func TestSetup(t *testing.T) {
 	// Load our generic file
 	file := LoadFilePath()
 
-	game := NewGame()
+	Init()
 
 	// Capture Setup's output for testing
 	output := CaptureOutput(func() {
@@ -34,7 +27,7 @@ func TestPlay(t *testing.T) {
 	// Load our generic file
 	file := LoadFilePath()
 
-	game := NewGame()
+	Init()
 
 	err := game.Setup(file, TestNumAliens)
 	assert.Nil(t, err)

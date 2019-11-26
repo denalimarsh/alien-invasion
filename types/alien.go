@@ -1,7 +1,6 @@
 package types
 
 import (
-	"log"
 	"math/rand"
 )
 
@@ -23,24 +22,29 @@ func NewAlien(id int, location *City) *Alien {
 // Move : randomly moves the Alien from their current city to a new city
 func (a *Alien) Move(r *rand.Rand) {
 	currCity := a.GetLocation()
-	if currCity.NumOutgoingPaths() > 0 {
-		outoingPath, err := currCity.GetRandomOutgoingPath(r)
-		if err != nil {
-			// TODO: trapped function
-			log.Printf("Alien %v is trapped!", a.GetID())
-			return
-		}
-		destCity := outoingPath.GetCity()
-		a.Location = destCity
-
+	if !a.IsTrapped() {
+		outgoingPath, _ := currCity.GetRandomOutgoingPath(r)
+		destCity := outgoingPath.GetCity()
 		currCity.AlienDeparture(a)
 		destCity.AlienArrival(a)
+		a.Location = destCity
 	}
 }
 
 // IsTrapped : returns true is the Alien is trapped in its current location
 func (a *Alien) IsTrapped() bool {
 	return a.GetLocation().NumOutgoingPaths() == 0
+}
+
+// Teleport : teleports the alien to a new city, only allowed if the alien
+//			  is trapped
+func (a *Alien) Teleport(portCity *City) {
+	if a.IsTrapped() {
+		currCity := a.GetLocation()
+		currCity.AlienDeparture(a)
+		portCity.AlienArrival(a)
+		a.Location = portCity
+	}
 }
 
 // GetID : returns the Alien's unique identifier
